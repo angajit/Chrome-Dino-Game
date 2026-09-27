@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>No internet - Chrome Dino Parody</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --link-color: #1a73e8;
+            --dino-color: #535353;
+            --pill-bg: #f1f3f4;
+        }
+
+        body.night-mode {
+            --bg-color: #202124;
+            --text-main: #e8eaed;
+            --text-muted: #9aa0a6;
+            --link-color: #8ab4f8;
+            --dino-color: #acacac;
+            --pill-bg: #303134;
+        }
+
+        @keyframes discoPulse {
+            0% { background-color: #fff0f6; }
+            25% { background-color: #f0f9ff; }
+            50% { background-color: #f4fce3; }
+            75% { background-color: #fff9db; }
+            100% { background-color: #f3f0ff; }
+        }
+
+        body.disco-mode {
+            animation: discoPulse 0.6s infinite alternate;
+        }
+
+        body.night-mode.disco-mode {
+            animation: none;
+            background: radial-gradient(circle at center, #2b1055 0%, #121316 100%);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-color 0.35s ease, color 0.35s ease;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .pixel-font {
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        .err-code-font {
+            font-family: 'Roboto Mono', Consolas, monospace;
+        }
+
+        /* Authentic Chrome Offline Container positioning */
+        .offline-wrapper {
+            max-width: 600px;
+            width: 92%;
+            margin: 8vh auto 3rem auto;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            touch-action: manipulation;
+        }
+
+        /* Interactive bullet styling */
+        .troubleshoot-item {
+            cursor: pointer;
+            transition: transform 0.15s ease, color 0.15s ease;
+            border-radius: 6px;
+            padding: 2px 6px;
+            margin-left: -6px;
+        }
+        .troubleshoot-item:hover {
+            background-color: rgba(26, 115, 232, 0.08);
+            color: var(--link-color);
+            transform: translateX(4px);
+        }
+        .troubleshoot-item:active {
+            transform: scale(0.98);
+        }
+
+        /* Toggle Switch Styling matching screenshot */
+        .chrome-pill {
+            background-color: var(--pill-bg);
+            border-radius: 9999px;
+            padding: 8px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .chrome-pill:hover {
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .switch-track {
+            width: 34px;
+            height: 18px;
+            background-color: #bdc1c6;
+            border-radius: 999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .switch-track.active {
+            background-color: #1a73e8;
+        }
+        .switch-Track-spicy.active {
+            background-color: #e11d48;
+        }
+        .switch-thumb {
+            width: 14px;
+            height: 14px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .switch-track.active .switch-thumb {
+            transform: translateX(16px);
+        }
+
+        /* Screen Shake Class */
+        @keyframes shakeAnim {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-4px, 3px); }
+            40% { transform: translate(4px, -3px); }
+            60% { transform: translate(-3px, -2px); }
+            80% { transform: translate(3px, 2px); }
+        }
+        .screen-shake {
+            animation: shakeAnim 0.22s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <div class="w-full border-b border-gray-200 dark:border-gray-800 bg-gray-50/70 px-4 py-2 flex items-center justify-between text-xs text-gray-500">
+        <div class="flex items-center gap-2 truncate max-w-md">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse"></span>
+            <span class="font-mono truncate">chrome://dino-twerk-edition/</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="soundToggleBtn" class="px-2.5 py-1 rounded-md bg-gray-200/80 hover:bg-gray-300 text-gray-700 font-medium transition flex items-center gap-1" title="Toggle 8-Bit Audio">
+                <span id="soundIcon">🔊</span> <span class="hidden sm:inline">SFX: ON</span>
+            </button>
+            <button id="themeToggleBtn" class="px-2.5 py-1 rounded-md bg-gray-200/80 hover:bg-gray-300 text-gray-700 font-medium transition" title="Toggle Dark Mode">
+                🌙 Invert
+            </button>
+        </div>
+    </div>
+
+    <main id="mainContainer" class="offline-wrapper flex-1">
+        
+        <!-- Active Power-up & Vibe Bar (Subtle until active) -->
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1 min-h-[24px] text-xs">
+            <div id="powerupBadges" class="flex items-center gap-1.5 flex-wrap"></div>
+            <div class="flex items-center gap-2 ml-auto">
+                <span class="text-[11px] font-mono opacity-75">5G LASER:</span>
+                <div class="w-24 h-2.5 bg-gray-200 rounded-full overflow-hidden border border-gray-300">
+                    <div id="laserBar" class="h-full bg-blue-600 transition-all duration-150" style="width: 100%;"></div>
+                </div>
+                <span id="laserReadyTag" class="text-[10px] font-bold text-blue-600 font-mono">[X/SHIFT]</span>
+            </div>
+        </div>
+
+        <!-- Game Canvas matching screenshot dimensions & look -->
+        <div class="relative w-full overflow-hidden rounded-lg">
+            <canvas id="gameCanvas" width="600" height="165"></canvas>
+        </div>
+
+        <!-- Dynamic Heading ("Press space to play") -->
+        <h1 id="mainHeading" class="text-[24px] font-semibold tracking-tight mt-6 mb-3" style="color: var(--text-main);">
+            Press space to play
+        </h1>
+
+        <!-- Interactive Troubleshooting Section -->
+        <div class="text-[15px] leading-relaxed" style="color: var(--text-muted);">
+            <p class="mb-1.5">Try:</p>
+            <ul class="list-disc pl-7 space-y-1">
+                <li id="tryCable" class="troubleshoot-item" title="Click to deploy a Wi-Fi Router Shield or Boss!">
+                    Checking the network cables, modem, and router
+                    <span id="badgeCable" class="ml-1.5 text-[11px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-mono hidden sm:inline">✨ Click me</span>
+                </li>
+                <li id="tryWifi" class="troubleshoot-item" title="Click to drop Golden Wi-Fi Bars & Lag Teleport!">
+                    Reconnecting to Wi-Fi
+                    <span id="badgeWifi" class="ml-1.5 text-[11px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 font-mono hidden sm:inline">📶 Rain Wi-Fi</span>
+                </li>
+                <li class="py-0.5">
+                    <button id="tryDiagnostics" class="text-left hover:underline font-normal focus:outline-none" style="color: var(--link-color);">
+                        Running Windows Network Diagnostics
+                    </button>
+                    <span class="ml-1.5 text-[11px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-mono">🔫 Free Laser</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Error Code Line + Dynamic Funny Status -->
+        <div class="mt-5 flex flex-wrap items-center justify-between gap-2">
+            <p id="errorCodeText" class="err-code-font text-[12px] tracking-wide uppercase" style="color: var(--text-muted);">
+                ERR_INTERNET_DISCONNECTED
+            </p>
+            <p id="comboCounterText" class="err-code-font text-[12px] font-bold text-pink-600 hidden">
+                TWERK STREAK: x1
+            </p>
+        </div>
+
+        <!-- Controls Hint Bar (Desktop & Mobile Touch Buttons) -->
+        <div class="mt-5 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-xs" style="color: var(--text-muted);">
+            <div class="flex flex-wrap gap-x-4 gap-y-1">
+                <span><kbd class="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-gray-700 font-mono">Space / ↑</kbd> Jump & Backflip</span>
+                <span><kbd class="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-gray-700 font-mono">↓ Down</kbd> Twerk Slide (+Pts)</span>
+                <span><kbd class="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-gray-700 font-mono">X / Shift</kbd> 5G Laser</span>
+            </div>
+        </div>
+
+        <!-- Touch Action Buttons for Mobile/Mouse Players -->
+        <div class="mt-4 grid grid-cols-3 gap-2.5 sm:hidden">
+            <button id="touchJumpBtn" class="py-3 px-3 rounded-xl bg-gray-100 active:bg-gray-200 text-gray-800 font-semibold text-xs shadow-sm border border-gray-300 flex flex-col items-center">
+                <span class="text-base">🦖⬆️</span>
+                <span>JUMP / FLIP</span>
+            </button>
+            <button id="touchTwerkBtn" class="py-3 px-3 rounded-xl bg-pink-50 active:bg-pink-100 text-pink-700 font-semibold text-xs shadow-sm border border-pink-200 flex flex-col items-center">
+                <span class="text-base">🍑⬇️</span>
+                <span>HOLD TWERK</span>
+            </button>
+            <button id="touchLaserBtn" class="py-3 px-3 rounded-xl bg-blue-50 active:bg-blue-100 text-blue-700 font-semibold text-xs shadow-sm border border-blue-200 flex flex-col items-center">
+                <span class="text-base">⚡🔫</span>
+                <span>5G LASER</span>
+            </button>
+        </div>
+
+        <!-- Bottom Pill Toggle Switches (Exact "Start slower" from screenshot + "Spicy Twerk Mode") -->
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <div id="startSlowerPill" class="chrome-pill cursor-pointer" role="switch" aria-checked="false">
+                <span>Start slower</span>
+                <div id="slowerTrack" class="switch-track">
+                    <div class="switch-thumb"></div>
+                </div>
+            </div>
+
+            <div id="spicyModePill" class="chrome-pill cursor-pointer" role="switch" aria-checked="true">
+                <span>Spicy Parody Mode 🔥</span>
+                <div id="spicyTrack" class="switch-track switch-Track-spicy active">
+                    <div class="switch-thumb"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="diagModal" class="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-50 hidden items-center justify-center p-4">
+        <div class="bg-white text-gray-900 rounded-lg shadow-2xl border border-gray-300 max-w-md w-full overflow-hidden animate-bounce-once">
+            <div class="bg-[#f0f4f9] px-4 py-2.5 border-b border-gray-200 flex items-center justify-between">
+                <div class="flex items-center gap-2 text-xs font-semibold text-gray-700">
+                    <span>🛠️</span>
+                    <span>Windows Network Diagnostics (Parody)</span>
+                </div>
+                <button id="closeDiagBtn" class="text-gray-400 hover:text-gray-700 font-bold text-sm px-1">✕</button>
+            </div>
+            <div class="p-5">
+                <div id="diagStep1">
+                    <p class="text-sm font-medium text-gray-800 mb-3">Detecting problems with your router...</p>
+                    <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-3">
+                        <div id="diagProgressBar" class="h-full bg-blue-600 transition-all duration-300" style="width: 15%;"></div>
+                    </div>
+                    <p id="diagStatusSub" class="text-xs text-gray-500 font-mono">Pinging hamster wheel inside ISP server...</p>
+                </div>
+                <div id="diagStep2" class="hidden">
+                    <div class="flex items-start gap-3 mb-3">
+                        <div class="text-2xl">🦖🔫</div>
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900">Diagnostics found 0 internet, but 100% Swag!</h3>
+                            <p class="text-xs text-gray-600 mt-1">
+                                Windows couldn't reconnect your Wi-Fi, so we mounted an <strong>Overclocked 5G Laser Cannon</strong> and <strong>Deal-With-It Shades</strong> onto your Dinosaur instead.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 rounded p-2.5 text-[11px] font-mono text-gray-600 mb-4">
+                        • Laser Energy: OVERCHARGED (Infinite for 12s)<br>
+                        • Deal With It Disco Mode: ACTIVATED<br>
+                        • Cactus Intimidation Level: MAXIMUM
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button id="claimDiagRewardBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded shadow">
+                            Equip 5G Laser & Play!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 8-BIT WEB AUDIO SYNTHESIZER
+         * Generates authentic Chrome Dino beeps plus parody lasers, twerk bass, and disco music.
+         */
+        class RetroSoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+                this.discoInterval = null;
+                this.beatStep = 0;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playTone(freq, type = 'square', duration = 0.08, vol = 0.12, slideTo = null) {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, now);
+                if (slideTo) {
+                    osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+                }
+
+                gain.gain.setValueAtTime(vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + duration);
+            }
+
+            jump() {
+                // Classic Chrome Dino jump sound
+                this.playTone(520, 'square', 0.09, 0.11, 680);
+            }
+
+            doubleJump() {
+                // Cool backflip arpeggio
+                this.playTone(587, 'square', 0.06, 0.11, 880);
+                setTimeout(() => this.playTone(880, 'square', 0.09, 0.11, 1174), 55);
+            }
+
+            twerkPop() {
+                // Funny bassy pop when twerking
+                this.playTone(150, 'triangle', 0.06, 0.16, 95);
+            }
+
+            laser() {
+                this.playTone(1100, 'sawtooth', 0.11, 0.1, 180);
+            }
+
+            explosion() {
+                this.playTone(140, 'sawtooth', 0.16, 0.15, 42);
+            }
+
+            milestone() {
+                // Authentic 100-pt two-tone chime
+                this.playTone(587.33, 'square', 0.08, 0.12);
+                setTimeout(() => this.playTone(880, 'square', 0.18, 0.12), 85);
+            }
+
+            powerup() {
+                const notes = [440, 554, 659, 880];
+                notes.forEach((n, i) => {
+                    setTimeout(() => this.playTone(n, 'square', 0.08, 0.11), i * 50);
+                });
+            }
+
+            crash() {
+                this.playTone(190, 'sawtooth', 0.12, 0.15, 90);
+                setTimeout(() => this.playTone(110, 'square', 0.25, 0.15, 55), 100);
+            }
+
+            startDiscoBeat() {
+                if (this.discoInterval) return;
+                const bassNotes = [130.81, 130.81, 164.81, 196.00, 174.61, 164.81, 146.83, 196.00];
+                this.discoInterval = setInterval(() => {
+                    if (!this.enabled || !game.discoTimer) return;
+                    const note = bassNotes[this.beatStep % bassNotes.length];
+                    this.playTone(note, 'triangle', 0.12, 0.12);
+                    if (this.beatStep % 2 === 1) {
+                        this.playTone(note * 4, 'square', 0.04, 0.05);
+                    }
+                    this.beatStep++;
+                }, 160);
+            }
+
+            stopDiscoBeat() {
+                if (this.discoInterval) {
+                    clearInterval(this.discoInterval);
+                    this.discoInterval = null;
+                }
+            }
+        }
+
+        const sfx = new RetroSoundEngine();
+
+        /**
+         * PIXEL ART SPRITES (Drawn crisply via Canvas fillRect)
+         */
+        const SPRITES = {
+            // Classic Chrome Dino standing/running base (20x22)
+            dinoStand: [
+                "          XXXXXXXX  ",
+                "         XXXXXXXXXX ",
+                "         XX XXXXXXX ",
+                "         XXXXXXXXXX ",
+                "         XXXXXXX    ",
+                "         XXXXXXXXX  ",
+                "         XXXX       ",
+                "X       XXXXXX      ",
+                "XX     XXXXXXXXX    ",
+                "XXX   XXXXXXXXX X   ",
+                "XXXX XXXXXXXXXX     ",
+                "XXXXXXXXXXXXXXX     ",
+                "XXXXXXXXXXXXXXX     ",
+                " XXXXXXXXXXXXX      ",
+                "  XXXXXXXXXXX       ",
+                "   XXXXXXXXX        ",
+                "    XXXXXXX         ",
+                "    XXX  XX         ",
+                "    XX    XX        "
+            ],
+            // Dino Twerking / Booty Shake Frame A
+            dinoTwerkA: [
+                "                    ",
+                "                    ",
+                "                    ",
+                "            XXXXXXXX",
+                "           XXXXXXXXX",
+                "  XXXX     XX XXXXXX",
+                " XXXXXX    XXXXXXXXX",
+                "XXXXXXXX  XXXXXXX   ",
+                "XXXXXXXXXXXXXXXXXXX ",
+                "XXXXXXXXXXXXXXXXX   ",
+                " XXXXXXXXXXXXXXX    ",
+                "  XXXXXXXXXXXX      ",
+                "   XXX    XXX       ",
+                "   XX      XX       "
+            ],
+            // Dino Twerking / Booty Shake Frame B (Booty raised high!)
+            dinoTwerkB: [
+                "                    ",
+                "                    ",
+                "  XXXX              ",
+                " XXXXXXX    XXXXXXXX",
+                "XXXXXXXXX  XXXXXXXXX",
+                "XXXXXXXXX  XX XXXXXX",
+                " XXXXXXXX  XXXXXXXXX",
+                "  XXXXXXXXXXXXXXXX  ",
+                "  XXXXXXXXXXXXXXX   ",
+                "   XXXXXXXXXXXXX    ",
+                "    XXXXXXXXXX      ",
+                "    XX     XX       ",
+                "   XX       XX      ",
+                "                    "
+            ],
+            // Deal With It Sunglasses overlay
+            sunglasses: [
+                "XXXXXXXXXXXX",
+                "X  XXX  XXX ",
+                "XXXXXXXXXX  "
+            ],
+            // Classic Small Cactus
+            cactusSmall: [
+                "    XX    ",
+                "    XX    ",
+                "    XX  X ",
+                " X  XX  XX",
+                "XX  XX  XX",
+                "XX  XX  XX",
+                "XX  XXXXXX",
+                "XXXXXX  XX",
+                "  XXXX    ",
+                "    XX    ",
+                "    XX    ",
+                "    XX    ",
+                "    XX    ",
+                "    XX    "
+            ],
+            // Wi-Fi Router Enemy
+            router: [
+                "   X     X   ",
+                "  X X   X X  ",
+                "   X     X   ",
+                "      X      ",
+                "     X X     ",
+                "  X       X  ",
+                "  X       X  ",
+                "XXXXXXXXXXXXX",
+                "X O O   O X X",
+                "XXXXXXXXXXXXX",
+                " X         X "
+            ],
+            // Pterodactyl
+            pteroA: [
+                "     XX          ",
+                "    XXXX         ",
+                "   XXXXXX        ",
+                "XXXXXXXXXX       ",
+                "      XXXXXXXXX  ",
+                "     XXXXXXXXXXXX",
+                "       XXXXXX    ",
+                "        XXXX     ",
+                "         XX      "
+            ],
+            pteroB: [
+                "                 ",
+                "    XXXX         ",
+                "   XXXXXX        ",
+                "XXXXXXXXXX       ",
+                "      XXXXXXXXX  ",
+                "     XXXXXXXXXXXX",
+                "     XXXX        ",
+                "    XXXX         ",
+                "   XX            "
+            ]
+        };
+
+        function drawSprite(ctx, matrix, x, y, scale = 2, color = '#535353') {
+            ctx.fillStyle = color;
+            for (let r = 0; r < matrix.length; r++) {
+                const row = matrix[r];
+                for (let c = 0; c < row.length; c++) {
+                    if (row[c] === 'X') {
+                        ctx.fillRect(Math.floor(x + c * scale), Math.floor(y + r * scale), scale, scale);
+                    }
+                }
+            }
+        }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Funny Commentary & Error Codes
+        const FUNNY_HEADINGS_PLAYING = [
+            "No Internet, Only Vibes",
+            "ISP is sleeping, keep jumping!",
+            "Twerk to assert dominance over Wi-Fi",
+            "Packet Loss? More like Cactus Boss",
+            "Downloading more RAM... 14%",
+            "Chrome Dino: Uncensored Booty Edition",
+            "Press [X] to vaporize your ISP's excuses"
+        ];
+
+        const FUNNY_CRASH_HEADINGS = [
+            "Press space to play (Skill Issue Detected)",
+            "Ouch! That cactus had 0ms ping",
+            "Connection Reset by Spiky Boi",
+            "Have you tried turning your Dino off and on?",
+            "404: Survival Skills Not Found",
+            "Press space to avenge your Dino"
+        ];
+
+        const FUNNY_ERROR_CODES = [
+            "ERR_INTERNET_DISCONNECTED",
+            "ERR_DINO_TOO_THICC",
+            "ERR_CACTUS_OVERLOAD",
+            "ERR_TOO_MUCH_SWAG_DETECTED",
+            "ERR_ROUTER_CAUGHT_HANDS",
+            "ERR_5G_LASER_OVERCLOCKED",
+            "ERR_TWERK_VIBRATION_CRITICAL"
+        ];
+
+        // Load high score (default 413 to match the user's screenshot!)
+        let savedHiScore = parseInt(localStorage.getItem('chromeDinoParodyHi') || '413', 10);
+
+        const game = {
+            state: 'IDLE', // 'IDLE', 'PLAYING', 'GAMEOVER'
+            score: 142,    // Starts at 00142 on idle screen just like screenshot!
+            hiScore: savedHiScore,
+            speed: 6.2,
+            baseSpeed: 6.2,
+            startSlower: false,
+            spicyMode: true,
+            frameCount: 0,
+            groundY: 142,
+            groundOffset: 0,
+
+            // Power-up timers (in frames)
+            discoTimer: 0,
+            giantTimer: 0,
+            shieldHits: 0,
+            infLaserTimer: 0,
+            laserCharge: 100,
+            twerkStreak: 0,
+
+            // Entities
+            clouds: [],
+            groundBumps: [],
+            obstacles: [],
+            powerups: [],
+            lasers: [],
+            particles: [],
+            floatingTexts: []
+        };
+
+        const dino = {
+            x: 42,
+            y: 104,
+            vy: 0,
+            gravity: 0.68,
+            jumpPower: -11.6,
+            width: 40,
+            height: 38,
+            jumpsUsed: 0,
+            maxJumps: 2,
+            isTwerking: false,
+            rotation: 0, // Used for 360 double-jump backflip!
+            scale: 2,
+            legFrame: 0,
+            twerkTick: 0
+        };
+
+        function initScenery() {
+            game.clouds = [
+                { x: 35, y: 38, speed: 0.5 },
+                { x: 295, y: 42, speed: 0.4 },
+                { x: 435, y: 38, speed: 0.6 },
+                { x: 565, y: 28, speed: 0.45 }
+            ];
+            game.groundBumps = [];
+            for (let i = 0; i < 45; i++) {
+                game.groundBumps.push({
+                    x: i * 18 + Math.random() * 10,
+                    w: Math.random() < 0.3 ? 6 : 2,
+                    yOff: Math.random() < 0.5 ? 3 : 6
+                });
+            }
+            // Place initial decorative double cactus like screenshot when IDLE
+            game.obstacles = [
+                {
+                    type: 'CACTUS_DOUBLE',
+                    x: 146,
+                    y: game.groundY - 34,
+                    w: 38,
+                    h: 34,
+                    sunglasses: false,
+                    hopOffset: 0
+                }
+            ];
+        }
+
+        function addFloatingText(text, x, y, color = '#1a73e8') {
+            game.floatingTexts.push({
+                text,
+                x,
+                y,
+                vy: -1.3,
+                alpha: 1.0,
+                color
+            });
+        }
+
+        function spawnParticles(x, y, color = '#535353', count = 12) {
+            for (let i = 0; i < count; i++) {
+                game.particles.push({
+                    x,
+                    y,
+                    vx: (Math.random() - 0.5) * 7,
+                    vy: (Math.random() - 0.7) * 6,
+                    size: Math.random() < 0.5 ? 4 : 3,
+                    color,
+                    life: 25 + Math.floor(Math.random() * 15)
+                });
+            }
+        }
+
+        function triggerScreenShake() {
+            const container = document.getElementById('mainContainer');
+            container.classList.remove('screen-shake');
+            void container.offsetWidth;
+            container.classList.add('screen-shake');
+        }
+
+        function updateUIStatus() {
+            const badgesContainer = document.getElementById('powerupBadges');
+            badgesContainer.innerHTML = '';
+
+            if (game.shieldHits > 0) {
+                badgesContainer.innerHTML += `<span class="px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-800 font-mono font-semibold">🛡️ Router Shield x${game.shieldHits}</span>`;
+            }
+            if (game.discoTimer > 0) {
+                badgesContainer.innerHTML += `<span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-mono font-semibold animate-pulse">🕶️ SWAG DISCO (${Math.ceil(game.discoTimer / 60)}s)</span>`;
+            }
+            if (game.giantTimer > 0) {
+                badgesContainer.innerHTML += `<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-mono font-semibold">🍄 MEGA THICC (${Math.ceil(game.giantTimer / 60)}s)</span>`;
+            }
+            if (game.infLaserTimer > 0) {
+                badgesContainer.innerHTML += `<span class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-mono font-semibold">⚡ 5G OVERCLOCK (${Math.ceil(game.infLaserTimer / 60)}s)</span>`;
+            }
+
+            const laserBar = document.getElementById('laserBar');
+            laserBar.style.width = `${Math.min(100, Math.floor(game.laserCharge))}%`;
+            laserBar.className = game.laserCharge >= 25 || game.infLaserTimer > 0
+                ? 'h-full bg-blue-600 transition-all duration-150'
+                : 'h-full bg-gray-400 transition-all duration-150';
+        }
+
+        function startGame() {
+            game.state = 'PLAYING';
+            game.score = 0;
+            game.baseSpeed = game.startSlower ? 4.5 : 6.2;
+            game.speed = game.baseSpeed;
+            game.obstacles = [];
+            game.powerups = [];
+            game.lasers = [];
+            game.particles = [];
+            game.floatingTexts = [];
+            game.twerkStreak = 0;
+            game.laserCharge = 100;
+
+            dino.y = game.groundY - dino.height;
+            dino.vy = 0;
+            dino.jumpsUsed = 0;
+            dino.rotation = 0;
+
+            document.getElementById('mainHeading').textContent = FUNNY_HEADINGS_PLAYING[0];
+            document.getElementById('errorCodeText').textContent = "ERR_INTERNET_DISCONNECTED";
+            addFloatingText("LET'S GO!", dino.x + 20, dino.y - 10, '#1a73e8');
+            sfx.jump();
+            updateUIStatus();
+        }
+
+        function handleJump() {
+            if (game.state === 'IDLE' || game.state === 'GAMEOVER') {
+                startGame();
+                return;
+            }
+
+            if (dino.jumpsUsed < dino.maxJumps) {
+                dino.vy = dino.jumpPower * (game.giantTimer > 0 ? 1.08 : 1);
+                dino.jumpsUsed++;
+                dino.isTwerking = false;
+
+                if (dino.jumpsUsed === 1) {
+                    sfx.jump();
+                } else {
+                    // Double jump backflip!
+                    sfx.doubleJump();
+                    dino.rotation = 0.1;
+                    game.score += 5;
+                    addFloatingText("DOUBLE FLIP! +5", dino.x + 10, dino.y - 8, '#9333ea');
+                    spawnParticles(dino.x + 15, dino.y + 30, '#9333ea', 6);
+                }
+            }
+        }
+
+        function setTwerk(active) {
+            if (game.state !== 'PLAYING') return;
+            dino.isTwerking = active;
+            if (active && dino.y < game.groundY - dino.height) {
+                // Fast-fall slam when pressing down in mid-air!
+                dino.vy = Math.max(dino.vy, 9.5);
+            }
+        }
+
+        function fireLaser() {
+            if (game.state !== 'PLAYING') {
+                startGame();
+                return;
+            }
+
+            if (game.laserCharge < 25 && game.infLaserTimer <= 0) {
+                addFloatingText("TWERK TO CHARGE!", dino.x + 20, dino.y - 10, '#dc2626');
+                return;
+            }
+
+            if (game.infLaserTimer <= 0) {
+                game.laserCharge = Math.max(0, game.laserCharge - 25);
+            }
+
+            sfx.laser();
+            game.lasers.push({
+                x: dino.x + (game.giantTimer > 0 ? 62 : 38),
+                y: dino.y + (dino.isTwerking ? 20 : 12),
+                w: 26,
+                h: 5,
+                speed: 13
+            });
+            updateUIStatus();
+        }
+
+        function spawnObstacle() {
+            const types = ['CACTUS_SINGLE', 'CACTUS_DOUBLE', 'PTERO'];
+            if (game.spicyMode) {
+                types.push('ROUTER', 'BLOCK_404', 'CACTUS_SWAG');
+            }
+            const pick = types[Math.floor(Math.random() * types.length)];
+            const x = canvas.width + 30;
+
+            if (pick === 'CACTUS_SINGLE') {
+                game.obstacles.push({
+                    type: 'CACTUS_SINGLE',
+                    x,
+                    y: game.groundY - 28,
+                    w: 20,
+                    h: 28,
+                    sunglasses: false,
+                    hopOffset: 0
+                });
+            } else if (pick === 'CACTUS_DOUBLE' || pick === 'CACTUS_SWAG') {
+                game.obstacles.push({
+                    type: 'CACTUS_DOUBLE',
+                    x,
+                    y: game.groundY - 32,
+                    w: 38,
+                    h: 32,
+                    sunglasses: pick === 'CACTUS_SWAG',
+                    hopOffset: 0
+                });
+            } else if (pick === 'ROUTER') {
+                game.obstacles.push({
+                    type: 'ROUTER',
+                    x,
+                    y: game.groundY - 24,
+                    w: 26,
+                    h: 24,
+                    blink: 0
+                });
+            } else if (pick === 'BLOCK_404') {
+                const high = Math.random() < 0.45;
+                game.obstacles.push({
+                    type: 'BLOCK_404',
+                    x,
+                    y: high ? game.groundY - 52 : game.groundY - 28,
+                    w: 42,
+                    h: 24
+                });
+            } else if (pick === 'PTERO') {
+                const heights = [game.groundY - 30, game.groundY - 56, game.groundY - 78];
+                const py = heights[Math.floor(Math.random() * heights.length)];
+                game.obstacles.push({
+                    type: 'PTERO',
+                    x,
+                    y: py,
+                    w: 34,
+                    h: 20
+                });
+            }
+        }
+
+        function spawnPowerup(forcedType = null) {
+            const kinds = ['SHADES', 'SHROOM', 'WIFI_GOLD', 'SHIELD'];
+            const kind = forcedType || kinds[Math.floor(Math.random() * kinds.length)];
+            game.powerups.push({
+                kind,
+                x: canvas.width + 20,
+                y: game.groundY - 55 - Math.random() * 35,
+                w: 22,
+                h: 22,
+                bobOffset: Math.random() * Math.PI * 2
+            });
+        }
+
+        function updateGame() {
+            game.frameCount++;
+
+            if (game.state !== 'PLAYING') return;
+
+            // Speed progression
+            const speedMultiplier = game.discoTimer > 0 ? 1.22 : 1.0;
+            game.speed = Math.min(13.5, (game.baseSpeed + Math.floor(game.score / 150) * 0.45) * speedMultiplier);
+
+            // Score increment
+            if (game.frameCount % 5 === 0) {
+                const prevHundreds = Math.floor(game.score / 100);
+                game.score += 1;
+                const newHundreds = Math.floor(game.score / 100);
+
+                if (newHundreds > prevHundreds && game.score > 0) {
+                    sfx.milestone();
+                    addFloatingText(`${newHundreds * 100} PTS!`, canvas.width - 110, 40, '#16a34a');
+                    // Rotate funny heading & error code every 100 pts
+                    document.getElementById('mainHeading').textContent =
+                        FUNNY_HEADINGS_PLAYING[newHundreds % FUNNY_HEADINGS_PLAYING.length];
+                    document.getElementById('errorCodeText').textContent =
+                        FUNNY_ERROR_CODES[newHundreds % FUNNY_ERROR_CODES.length];
+                }
+            }
+
+            // Passive laser recharge
+            if (game.laserCharge < 100) {
+                game.laserCharge = Math.min(100, game.laserCharge + (dino.isTwerking ? 0.45 : 0.12));
+                if (game.frameCount % 10 === 0) updateUIStatus();
+            }
+
+            // Power-up timers countdown
+            if (game.discoTimer > 0) {
+                game.discoTimer--;
+                if (game.discoTimer === 0) {
+                    document.body.classList.remove('disco-mode');
+                    sfx.stopDiscoBeat();
+                    updateUIStatus();
+                } else if (game.discoTimer % 60 === 0) {
+                    updateUIStatus();
+                }
+            }
+
+            if (game.giantTimer > 0) {
+                game.giantTimer--;
+                if (game.giantTimer === 0 || game.giantTimer % 60 === 0) updateUIStatus();
+            }
+
+            if (game.infLaserTimer > 0) {
+                game.infLaserTimer--;
+                game.laserCharge = 100;
+                if (game.infLaserTimer === 0 || game.infLaserTimer % 60 === 0) updateUIStatus();
+            }
+
+            // Dino dimensions based on Giant Mushroom & Twerk crouch
+            dino.scale = game.giantTimer > 0 ? 3.2 : 2;
+            const currentHeight = (dino.isTwerking ? 14 : 19) * dino.scale;
+            const currentWidth = 20 * dino.scale;
+            dino.width = currentWidth;
+            dino.height = currentHeight;
+
+            // Dino vertical physics
+            dino.y += dino.vy;
+            if (dino.y < game.groundY - dino.height) {
+                dino.vy += dino.gravity;
+            } else {
+                dino.y = game.groundY - dino.height;
+                dino.vy = 0;
+                dino.jumpsUsed = 0;
+                dino.rotation = 0;
+            }
+
+            // Backflip rotation during second jump
+            if (dino.rotation > 0) {
+                dino.rotation += 0.32;
+                if (dino.rotation >= Math.PI * 2) {
+                    dino.rotation = 0;
+                }
+            }
+
+            // Twerk bonus mechanics!
+            const comboEl = document.getElementById('comboCounterText');
+            if (dino.isTwerking && dino.vy === 0) {
+                dino.twerkTick++;
+                if (dino.twerkTick % 16 === 0) {
+                    game.twerkStreak++;
+                    game.score += 2;
+                    sfx.twerkPop();
+                    comboEl.classList.remove('hidden');
+                    comboEl.textContent = `🍑 TWERK STREAK: x${game.twerkStreak}`;
+                    addFloatingText(`+2 TWERK!`, dino.x + 8, dino.y - 6, '#db2777');
+                    spawnParticles(dino.x + 6, dino.y + 10, '#ec4899', 3);
+                }
+            } else if (!dino.isTwerking && game.twerkStreak > 0 && game.frameCount % 90 === 0) {
+                game.twerkStreak = 0;
+                comboEl.classList.add('hidden');
+            }
+
+            // Move clouds
+            game.clouds.forEach(c => {
+                c.x -= c.speed;
+                if (c.x < -50) c.x = canvas.width + 40;
+            });
+
+            // Move ground bumps
+            game.groundBumps.forEach(b => {
+                b.x -= game.speed;
+                if (b.x < -20) {
+                    b.x = canvas.width + Math.random() * 30;
+                }
+            });
+
+            // Spawn obstacles
+            const minGap = Math.max(170, 290 - game.speed * 10);
+            const lastObs = game.obstacles[game.obstacles.length - 1];
+            if (!lastObs || (canvas.width - lastObs.x > minGap + Math.random() * 140)) {
+                spawnObstacle();
+            }
+
+            // Spawn powerups occasionally in Spicy Mode
+            if (game.spicyMode && game.frameCount % 260 === 0 && Math.random() < 0.75) {
+                spawnPowerup();
+            }
+
+            // Update Lasers
+            for (let i = game.lasers.length - 1; i >= 0; i--) {
+                const l = game.lasers[i];
+                l.x += l.speed;
+                if (l.x > canvas.width + 30) {
+                    game.lasers.splice(i, 1);
+                    continue;
+                }
+
+                // Check laser vs obstacle collision
+                for (let j = game.obstacles.length - 1; j >= 0; j--) {
+                    const o = game.obstacles[j];
+                    if (
+                        l.x < o.x + o.w &&
+                        l.x + l.w > o.x &&
+                        l.y < o.y + o.h &&
+                        l.y + l.h > o.y
+                    ) {
+                        sfx.explosion();
+                        spawnParticles(o.x + o.w / 2, o.y + o.h / 2, '#ef4444', 15);
+                        game.score += 15;
+                        addFloatingText("DELETED! +15", o.x, o.y - 5, '#ef4444');
+                        game.obstacles.splice(j, 1);
+                        game.lasers.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+
+            // Update Power-ups
+            for (let i = game.powerups.length - 1; i >= 0; i--) {
+                const p = game.powerups[i];
+                p.x -= game.speed * 0.85;
+                const bobY = p.y + Math.sin(game.frameCount * 0.1 + p.bobOffset) * 5;
+
+                if (
+                    dino.x < p.x + p.w &&
+                    dino.x + dino.width > p.x &&
+                    dino.y < bobY + p.h &&
+                    dino.y + dino.height > bobY
+                ) {
+                    sfx.powerup();
+                    if (p.kind === 'SHADES') {
+                        game.discoTimer = 480; // 8 seconds
+                        document.body.classList.add('disco-mode');
+                        sfx.startDiscoBeat();
+                        addFloatingText("DEAL WITH IT! DISCO MODE", dino.x, dino.y - 18, '#9333ea');
+                        document.getElementById('errorCodeText').textContent = "ERR_TOO_MUCH_SWAG_DETECTED";
+                    } else if (p.kind === 'SHROOM') {
+                        game.giantTimer = 420; // 7 seconds
+                        addFloatingText("MEGA THICC DINO!", dino.x, dino.y - 18, '#d97706');
+                        document.getElementById('errorCodeText').textContent = "ERR_DINO_TOO_THICC";
+                    } else if (p.kind === 'WIFI_GOLD') {
+                        game.score += 50;
+                        game.laserCharge = 100;
+                        addFloatingText("+50 FULL BARS!", dino.x, dino.y - 18, '#eab308');
+                    } else if (p.kind === 'SHIELD') {
+                        game.shieldHits = Math.min(3, game.shieldHits + 1);
+                        addFloatingText("FIREWALL SHIELD!", dino.x, dino.y - 18, '#0891b2');
+                    }
+                    updateUIStatus();
+                    game.powerups.splice(i, 1);
+                    continue;
+                }
+
+                if (p.x < -40) game.powerups.splice(i, 1);
+            }
+
+            // Update Obstacles & Collisions
+            for (let i = game.obstacles.length - 1; i >= 0; i--) {
+                const o = game.obstacles[i];
+                o.x -= game.speed + (o.type === 'PTERO' ? 1.2 : 0);
+
+                // Swag cactus hops when getting close!
+                if (o.sunglasses && o.x < 240 && o.x > 120) {
+                    o.hopOffset = Math.abs(Math.sin(game.frameCount * 0.18)) * 18;
+                } else {
+                    o.hopOffset = 0;
+                }
+
+                const obsY = o.y - (o.hopOffset || 0);
+
+                // Forgiving hitbox padding
+                const pad = 5;
+                if (
+                    dino.x + pad < o.x + o.w - pad &&
+                    dino.x + dino.width - pad > o.x + pad &&
+                    dino.y + pad < obsY + o.h - pad &&
+                    dino.y + dino.height - pad > obsY + pad
+                ) {
+                    // Invincible states: Disco Mode or Giant Thicc Mode
+                    if (game.discoTimer > 0 || game.giantTimer > 0) {
+                        sfx.explosion();
+                        triggerScreenShake();
+                        spawnParticles(o.x + o.w / 2, obsY + o.h / 2, '#f59e0b', 14);
+                        game.score += 20;
+                        addFloatingText("SMASHED! +20", o.x, obsY - 10, '#f59e0b');
+                        game.obstacles.splice(i, 1);
+                        continue;
+                    }
+
+                    // Stomp check: if Dino is falling from above onto a Ptero or Router
+                    if (dino.vy > 1 && dino.y + dino.height - dino.vy <= obsY + 12) {
+                        sfx.doubleJump();
+                        dino.vy = -9.5;
+                        dino.jumpsUsed = 1;
+                        spawnParticles(o.x + o.w / 2, obsY, '#10b981', 12);
+                        game.score += 25;
+                        addFloatingText("GOOMBA STOMP! +25", o.x, obsY - 12, '#10b981');
+                        game.obstacles.splice(i, 1);
+                        continue;
+                    }
+
+                    // Shield absorb check
+                    if (game.shieldHits > 0) {
+                        game.shieldHits--;
+                        sfx.explosion();
+                        triggerScreenShake();
+                        spawnParticles(o.x + o.w / 2, obsY + o.h / 2, '#06b6d4', 16);
+                        addFloatingText("SHIELD BLOCKED!", dino.x, dino.y - 15, '#06b6d4');
+                        game.obstacles.splice(i, 1);
+                        updateUIStatus();
+                        continue;
+                    }
+
+                    // Otherwise -> GAME OVER!
+                    handleGameOver();
+                    break;
+                }
+
+                if (o.x < -60) {
+                    game.obstacles.splice(i, 1);
+                }
+            }
+
+            // Update Particles
+            for (let i = game.particles.length - 1; i >= 0; i--) {
+                const pt = game.particles[i];
+                pt.x += pt.vx;
+                pt.y += pt.vy;
+                pt.vy += 0.25;
+                pt.life--;
+                if (pt.life <= 0) game.particles.splice(i, 1);
+            }
+
+            // Update Floating Texts
+            for (let i = game.floatingTexts.length - 1; i >= 0; i--) {
+                const ft = game.floatingTexts[i];
+                ft.y += ft.vy;
+                ft.alpha -= 0.022;
+                if (ft.alpha <= 0) game.floatingTexts.splice(i, 1);
+            }
+        }
+
+        function handleGameOver() {
+            game.state = 'GAMEOVER';
+            sfx.crash();
+            sfx.stopDiscoBeat();
+            document.body.classList.remove('disco-mode');
+            triggerScreenShake();
+
+            if (game.score > game.hiScore) {
+                game.hiScore = game.score;
+                localStorage.setItem('chromeDinoParodyHi', String(game.hiScore));
+            }
+
+            const msg = FUNNY_CRASH_HEADINGS[Math.floor(Math.random() * FUNNY_CRASH_HEADINGS.length)];
+            document.getElementById('mainHeading').textContent = msg;
+            document.getElementById('errorCodeText').textContent =
+                FUNNY_ERROR_CODES[Math.floor(Math.random() * FUNNY_ERROR_CODES.length)];
+        }
+
+        function drawCloud(x, y, color) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x, y + 10);
+            ctx.lineTo(x + 42, y + 10);
+            ctx.arc(x + 34, y + 6, 6, 0, Math.PI, true);
+            ctx.arc(x + 23, y + 4, 8, 0, Math.PI, true);
+            ctx.arc(x + 12, y + 7, 5, 0, Math.PI, true);
+            ctx.closePath();
+            ctx.stroke();
+        }
+
+        function renderGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const isNight = document.body.classList.contains('night-mode');
+            const spriteColor = isNight ? '#d1d5db' : '#535353';
+            const cloudColor = isNight ? '#4b5563' : '#d6d6d6';
+
+            // 1. Draw Pixel Clouds
+            game.clouds.forEach(c => drawCloud(c.x, c.y, cloudColor));
+
+            // 2. Draw Top-Right Score ("HI 00413 00142")
+            ctx.font = '13px "Press Start 2P", monospace';
+            ctx.textAlign = 'right';
+            const hiStr = String(Math.floor(game.hiScore)).padStart(5, '0');
+            const scoreStr = String(Math.floor(game.score)).padStart(5, '0');
+
+            ctx.fillStyle = isNight ? '#9ca3af' : '#757575';
+            ctx.fillText(`HI ${hiStr}`, canvas.width - 96, 24);
+            ctx.fillStyle = spriteColor;
+            ctx.fillText(scoreStr, canvas.width - 14, 24);
+
+            // 3. Draw Ground Line & Bumps
+            ctx.fillStyle = spriteColor;
+            ctx.fillRect(0, game.groundY, canvas.width, 1.5);
+            game.groundBumps.forEach(b => {
+                ctx.fillRect(b.x, game.groundY + b.yOff, b.w, 1.5);
+            });
+
+            // 4. Draw Power-ups
+            game.powerups.forEach(p => {
+                const bobY = p.y + Math.sin(game.frameCount * 0.1 + p.bobOffset) * 5;
+                ctx.font = '18px sans-serif';
+                ctx.textAlign = 'center';
+                const icon = p.kind === 'SHADES' ? '🕶️' : p.kind === 'SHROOM' ? '🍄' : p.kind === 'WIFI_GOLD' ? '📶' : '🛡️';
+                ctx.fillText(icon, p.x + 11, bobY + 17);
+            });
+
+            // 5. Draw Obstacles
+            game.obstacles.forEach(o => {
+                const oy = o.y - (o.hopOffset || 0);
+                if (o.type === 'CACTUS_SINGLE') {
+                    drawSprite(ctx, SPRITES.cactusSmall, o.x, oy, 2, spriteColor);
+                } else if (o.type === 'CACTUS_DOUBLE') {
+                    drawSprite(ctx, SPRITES.cactusSmall, o.x, oy, 2.2, spriteColor);
+                    drawSprite(ctx, SPRITES.cactusSmall, o.x + 18, oy + 2, 2.1, spriteColor);
+                    if (o.sunglasses) {
+                        drawSprite(ctx, SPRITES.sunglasses, o.x + 2, oy + 4, 1.5, '#111827');
+                    }
+                } else if (o.type === 'ROUTER') {
+                    drawSprite(ctx, SPRITES.router, o.x, oy, 2, spriteColor);
+                    // Blinking Wi-Fi signal arcs above router
+                    if (Math.floor(game.frameCount / 10) % 2 === 0) {
+                        ctx.fillStyle = '#ef4444';
+                        ctx.fillRect(o.x + 10, oy - 6, 6, 3);
+                    }
+                } else if (o.type === 'BLOCK_404') {
+                    ctx.fillStyle = spriteColor;
+                    ctx.fillRect(o.x, oy, o.w, o.h);
+                    ctx.fillStyle = isNight ? '#202124' : '#ffffff';
+                    ctx.font = 'bold 11px "Roboto Mono", monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('404', o.x + o.w / 2, oy + 16);
+                } else if (o.type === 'PTERO') {
+                    const pSprite = Math.floor(game.frameCount / 8) % 2 === 0 ? SPRITES.pteroA : SPRITES.pteroB;
+                    drawSprite(ctx, pSprite, o.x, oy, 2, spriteColor);
+                }
+            });
+
+            // 6. Draw 5G Lasers
+            game.lasers.forEach(l => {
+                ctx.fillStyle = '#2563eb';
+                ctx.fillRect(l.x, l.y, l.w, l.h);
+                ctx.fillStyle = '#93c5fd';
+                ctx.fillRect(l.x + 4, l.y + 1, l.w - 8, l.h - 2);
+            });
+
+            // 7. Draw Dino (with Backflip rotation, Twerk animation, or Sunglasses!)
+            ctx.save();
+            const centerX = dino.x + dino.width / 2;
+            const centerY = dino.y + dino.height / 2;
+            ctx.translate(centerX, centerY);
+            if (dino.rotation > 0) {
+                ctx.rotate(dino.rotation);
+            }
+
+            const drawX = -dino.width / 2;
+            const drawY = -dino.height / 2;
+            const dinoHue = game.discoTimer > 0
+                ? `hsl(${(game.frameCount * 12) % 360}, 85%, 45%)`
+                : spriteColor;
+
+            if (dino.isTwerking) {
+                const twerkMatrix = Math.floor(game.frameCount / 5) % 2 === 0
+                    ? SPRITES.dinoTwerkA
+                    : SPRITES.dinoTwerkB;
+                drawSprite(ctx, twerkMatrix, drawX, drawY, dino.scale, dinoHue);
+                // Funny musical note / sweat lines near booty when twerking
+                ctx.fillStyle = '#ec4899';
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText('~🍑', drawX - 6, drawY + 6);
+            } else {
+                drawSprite(ctx, SPRITES.dinoStand, drawX, drawY, dino.scale, dinoHue);
+
+                // Animate running legs by clearing alternating foot pixels when on ground
+                if (game.state === 'PLAYING' && dino.vy === 0) {
+                    ctx.fillStyle = isNight ? '#202124' : '#ffffff';
+                    if (Math.floor(game.frameCount / 5) % 2 === 0) {
+                        ctx.fillRect(drawX + 4 * dino.scale, drawY + 18 * dino.scale, 3 * dino.scale, dino.scale);
+                    } else {
+                        ctx.fillRect(drawX + 9 * dino.scale, drawY + 18 * dino.scale, 3 * dino.scale, dino.scale);
+                    }
+                }
+
+                // Wide shocked eye on Game Over
+                if (game.state === 'GAMEOVER') {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillRect(drawX + 11 * dino.scale, drawY + 2 * dino.scale, 2 * dino.scale, 2 * dino.scale);
+                }
+            }
+
+            // Deal With It Sunglasses on Dino!
+            if (game.discoTimer > 0 || game.infLaserTimer > 0) {
+                const shadesY = dino.isTwerking ? drawY + 5 * dino.scale : drawY + 2 * dino.scale;
+                const shadesX = dino.isTwerking ? drawX + 10 * dino.scale : drawX + 10 * dino.scale;
+                drawSprite(ctx, SPRITES.sunglasses, shadesX, shadesY, dino.scale * 0.75, '#111827');
+            }
+
+            // Shield Bubble around Dino
+            if (game.shieldHits > 0) {
+                ctx.strokeStyle = '#06b6d4';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, dino.width * 0.68, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+
+            // 8. Draw Particles
+            game.particles.forEach(pt => {
+                ctx.fillStyle = pt.color;
+                ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
+            });
+
+            // 9. Draw Floating Text Popups
+            game.floatingTexts.forEach(ft => {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, ft.alpha);
+                ctx.font = 'bold 10px "Press Start 2P", monospace';
+                ctx.fillStyle = ft.color;
+                ctx.textAlign = 'left';
+                ctx.fillText(ft.text, ft.x, ft.y);
+                ctx.restore();
+            });
+
+            // 10. Game Over Center Replay Icon & Message
+            if (game.state === 'GAMEOVER') {
+                ctx.fillStyle = spriteColor;
+                ctx.font = '13px "Press Start 2P", monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('G A M E  O V E R', canvas.width / 2, 58);
+
+                // Draw classic rounded replay button box
+                const bx = canvas.width / 2 - 18;
+                const by = 72;
+                ctx.fillStyle = spriteColor;
+                ctx.fillRect(bx, by, 36, 32);
+                ctx.fillStyle = isNight ? '#202124' : '#ffffff';
+                ctx.font = 'bold 18px sans-serif';
+                ctx.fillText('↻', canvas.width / 2, by + 23);
+            }
+        }
+
+        function gameLoop() {
+            updateGame();
+            renderGame();
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (['Space', 'ArrowUp', 'KeyW'].includes(e.code)) {
+                e.preventDefault();
+                handleJump();
+            } else if (['ArrowDown', 'KeyS'].includes(e.code)) {
+                e.preventDefault();
+                setTwerk(true);
+            } else if (['KeyX', 'ShiftLeft', 'ShiftRight', 'KeyF'].includes(e.code)) {
+                e.preventDefault();
+                fireLaser();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (['ArrowDown', 'KeyS'].includes(e.code)) {
+                setTwerk(false);
+            }
+        });
+
+        // Canvas Click / Tap to Jump
+        canvas.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            handleJump();
+        });
+
+        // Mobile Touch Buttons
+        document.getElementById('touchJumpBtn').addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            handleJump();
+        });
+
+        const touchTwerkBtn = document.getElementById('touchTwerkBtn');
+        touchTwerkBtn.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            setTwerk(true);
+        });
+        touchTwerkBtn.addEventListener('pointerup', () => setTwerk(false));
+        touchTwerkBtn.addEventListener('pointerleave', () => setTwerk(false));
+
+        document.getElementById('touchLaserBtn').addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            fireLaser();
+        });
+
+        // Interactive Parody Troubleshooting Bullet 1: Router Shield
+        document.getElementById('tryCable').addEventListener('click', () => {
+            if (game.state !== 'PLAYING') startGame();
+            sfx.powerup();
+            game.shieldHits = 3;
+            addFloatingText("MODEM CHECKED: +3 SHIELD!", dino.x + 10, dino.y - 15, '#0891b2');
+            document.getElementById('errorCodeText').textContent = "ERR_ROUTER_SHIELD_DEPLOYED";
+            updateUIStatus();
+        });
+
+        // Interactive Parody Troubleshooting Bullet 2: Rain Golden Wi-Fi Bars
+        document.getElementById('tryWifi').addEventListener('click', () => {
+            if (game.state !== 'PLAYING') startGame();
+            sfx.powerup();
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => spawnPowerup('WIFI_GOLD'), i * 280);
+            }
+            addFloatingText("RAINING GOLDEN WI-FI!", dino.x + 10, dino.y - 15, '#eab308');
+            document.getElementById('errorCodeText').textContent = "ERR_WIFI_PACKETS_RAINING";
+        });
+
+        // Interactive Parody Troubleshooting Bullet 3: Fake Windows Network Diagnostics Modal
+        const diagModal = document.getElementById('diagModal');
+        const diagStep1 = document.getElementById('diagStep1');
+        const diagStep2 = document.getElementById('diagStep2');
+        const diagProgressBar = document.getElementById('diagProgressBar');
+        const diagStatusSub = document.getElementById('diagStatusSub');
+
+        document.getElementById('tryDiagnostics').addEventListener('click', () => {
+            diagModal.classList.remove('hidden');
+            diagModal.classList.add('flex');
+            diagStep1.classList.remove('hidden');
+            diagStep2.classList.add('hidden');
+            diagProgressBar.style.width = '20%';
+            diagStatusSub.textContent = "Asking router nicely to behave...";
+
+            setTimeout(() => {
+                diagProgressBar.style.width = '65%';
+                diagStatusSub.textContent = "Router refused. Preparing tactical 5G Laser...";
+            }, 500);
+
+            setTimeout(() => {
+                diagProgressBar.style.width = '100%';
+                diagStep1.classList.add('hidden');
+                diagStep2.classList.remove('hidden');
+                sfx.powerup();
+            }, 1050);
+        });
+
+        document.getElementById('closeDiagBtn').addEventListener('click', () => {
+            diagModal.classList.add('hidden');
+            diagModal.classList.remove('flex');
+        });
+
+        document.getElementById('claimDiagRewardBtn').addEventListener('click', () => {
+            diagModal.classList.add('hidden');
+            diagModal.classList.remove('flex');
+            if (game.state !== 'PLAYING') startGame();
+            game.infLaserTimer = 720; // 12 seconds of infinite laser
+            game.discoTimer = 480;
+            document.body.classList.add('disco-mode');
+            sfx.startDiscoBeat();
+            updateUIStatus();
+            addFloatingText("5G LASER OVERCLOCKED!", dino.x, dino.y - 20, '#2563eb');
+        });
+
+        // Bottom Toggle Switches ("Start slower" & "Spicy Parody Mode")
+        document.getElementById('startSlowerPill').addEventListener('click', () => {
+            game.startSlower = !game.startSlower;
+            const track = document.getElementById('slowerTrack');
+            track.classList.toggle('active', game.startSlower);
+            game.baseSpeed = game.startSlower ? 4.5 : 6.2;
+            addFloatingText(game.startSlower ? "CHILL SPEED ON" : "NORMAL SPEED", dino.x, dino.y - 12, '#64748b');
+        });
+
+        document.getElementById('spicyModePill').addEventListener('click', () => {
+            game.spicyMode = !game.spicyMode;
+            const track = document.getElementById('spicyTrack');
+            track.classList.toggle('active', game.spicyMode);
+            addFloatingText(game.spicyMode ? "SPICY MODE ON 🔥" : "CLASSIC MODE", dino.x, dino.y - 12, '#e11d48');
+        });
+
+        // Top Bar Audio & Dark Mode Toggles
+        document.getElementById('soundToggleBtn').addEventListener('click', () => {
+            sfx.enabled = !sfx.enabled;
+            document.getElementById('soundIcon').textContent = sfx.enabled ? '🔊' : '🔇';
+            if (!sfx.enabled) sfx.stopDiscoBeat();
+        });
+
+        document.getElementById('themeToggleBtn').addEventListener('click', () => {
+            document.body.classList.toggle('night-mode');
+        });
+
+        // Start game loop on window load
+        window.onload = function () {
+            initScenery();
+            gameLoop();
+        };
+    </script>
+</body>
+</html>
